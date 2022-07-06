@@ -1,41 +1,37 @@
 """J. Рифмы (30 баллов)"""
 
 if __name__ == '__main__':
-    list_of_words = [input() for _ in range(int(input()))]
+    suffixes = {}
+    vocabulary = []
+    for _ in range(int(input())):
+        voc_word = input()
+        vocabulary.append(voc_word)
+        for i in range(len(voc_word)):
+            suf = voc_word[i:]
+            if suffixes.get(suf):
+                suffixes[suf].append(voc_word)
+            else:
+                suffixes[suf] = [voc_word]
 
     for _ in range(int(input())):
         word = input()
-        rifm = {}
-        already_printed = False
-        for w in list_of_words:
-            if word != w:
-                if len(word) == 1:
-                    if word == w[-1]:
-                        if len(w) > 1:
-                            print(w)
-                        else:
-                            print(list_of_words[0])
-                        already_printed = True
-                        break
+        suf = ''
+        last_matched_words_list = []
+        is_matched = False
+        for w in word[::-1]:
+            suf += w
+            suf_revert = suf[::-1]
+            if matched := suffixes.get(suf_revert):
+                if word in matched and len(matched) == 1:
+                    continue
                 else:
-                    w_copy = list(w)
-                    count = 0
-                    for sym in word[::-1]:
-                        last_sym = w_copy.pop()
-                        count += 1
-                        if last_sym == sym:
-                            rifm[w] = count
-                        else:
-                            break
-                        if rifm[w] == len(word) or not w_copy:
-                            break
-
-        if not already_printed:
-            if rifm:
-                m = max(rifm.values())
-                for k, v in rifm.items():
-                    if v == m:
-                        print(k)
-                        break
+                    last_matched_words_list = matched
             else:
-                print(list_of_words[0])
+                break
+        for matched_word in last_matched_words_list:
+            if matched_word != word:
+                print(matched_word)
+                is_matched = True
+                break
+        if not is_matched:
+            print(vocabulary[0])
